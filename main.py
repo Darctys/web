@@ -43,7 +43,7 @@ def cv_index():
 def dashboard():
     con = get_con()
     res = list(con.execute("SELECT COUNT(*) as 'count', strftime('%Y', dateModify) as 'year' "
-                   "FROM works WHERE year IS NOT NULL GROUP BY year"))
+                           "FROM works WHERE year IS NOT NULL GROUP BY year"))
     con.close()
     data = [r["count"] for r in res]
     labels = [r["year"] for r in res]
@@ -82,5 +82,24 @@ def create_figure():
     ys = [random.randint(1, 50) for x in xs]
     axis.plot(xs, ys)
     return fig
+
+
+@app.route("/managers")
+def edu_managers():
+    con = get_con()
+    res = list(con.execute(get_top_query(("manager", "менеджер"))))
+    data = [r["count"] for r in res]
+    labels = [r["qualification"] for r in res]
+    return render_template('d2.html', cvs=res, data=data, labels=labels, ql="менеджеров")
+
+
+@app.route("/engineer")
+def edu_engineers():
+    con = get_con()
+    res = list(con.execute(get_top_query(("engineer", "инженер"))))
+    data = [r["count"] for r in res]
+    labels = [r["qualification"] for r in res]
+    return render_template('d2.html', cvs=res, data=data, labels=labels, ql="инженеров")
+
 
 app.run()
